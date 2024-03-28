@@ -495,8 +495,15 @@ window.app = {
             <img src="images/product.png" alt="">
           </div>
         </div>
-    
-    
+  
+        <style>
+          div.iti {
+            border: 1px solid #3578e563;
+          }
+          div.iti input[type="tel"] {
+            border: none;
+          }
+        </style>
         <div class="form_wrap" id="objectScrollAttention">
           <form method="POST" geo="es" action="api.php" onsubmit="return validate_form(this, 'Por favor ingrese un número de teléfono válido');">
             <label class="descount">Descuento -50%</label>
@@ -556,5 +563,50 @@ window.app = {
     $('body,html').animate({scrollTop: top - 70}, 1500);
     });
 </script>
+
+<!-- PHONE INPUT -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@20.0.5/build/css/intlTelInput.css">
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@20.0.5/build/js/intlTelInput.min.js"></script>
+  <script>
+    const input = document.querySelector("#phone");
+    const submitButton = document.querySelector("button[type='submit']");
+    const iti = window.intlTelInput(input, {
+      allowDropdown: false,
+      countrySearch: false,
+      geoIpLookup: function(callback) {
+        fetch("https://ipapi.co/json")
+          .then(function(res) { return res.json(); })
+          .then(function(data) { callback(data.country_code); })
+          .catch(function() { callback(); });
+      },
+
+
+      initialCountry: "es",
+      placeholderNumberType: "MOBILE",
+      showFlags: true,
+      showSelectedDialCode: true,
+      utilsScript: "./js/utils.js",
+    });
+
+    input.addEventListener('input', function() {
+      const validationMessage = document.querySelector("#validation-message");
+
+      if (iti.isValidNumber()) {
+        if (validationMessage) {
+          validationMessage.textContent = "Phone number is valid";
+        } else {
+          validationMessage.textContent = "Phone number is valid";
+        }
+        submitButton.removeAttribute('disabled');
+      } else {
+        if (validationMessage) {
+          validationMessage.textContent = "Phone number is not valid";
+        } else {
+          validationMessage.textContent = "Phone number is not valid";
+        }
+        submitButton.setAttribute('disabled', 'disabled');
+      }
+    })
+  </script>
 </body>
 </html>
